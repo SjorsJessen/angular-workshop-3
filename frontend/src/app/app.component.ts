@@ -32,6 +32,8 @@ export class AppComponent implements OnInit {
     });
     this.submitData();
     this.submitJsonData();
+    const binaryData: ArrayBuffer = new ArrayBuffer(8);
+    this.dataService.sendBinaryData(binaryData);
   }
 
   public submitData(): void {

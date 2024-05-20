@@ -1,7 +1,7 @@
 import json
 from typing import Any
 
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -100,3 +100,11 @@ async def upload_file(file: UploadFile = File(...)) -> dict[str, str | None]:
     print(contents)
     # Process the file contents as needed
     return {"Processed filename": file.filename}
+
+
+@app.post("/binary-data")
+async def upload_binary_data(request: Request) -> dict[str, str]:
+    binary_data: bytes = await request.body()
+    print(binary_data)
+    # Process the binary data as needed
+    return {"message": "Binary data uploaded successfully"}
