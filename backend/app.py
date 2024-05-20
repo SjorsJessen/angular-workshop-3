@@ -1,18 +1,98 @@
-from typing import Union
+from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Form
+from pydantic import BaseModel
 import uvicorn
+import json
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
+
+
+class Data(BaseModel):
+    id: int
+    message: str
+
+
+def create_data() -> list[Data]:
+    data: list[Data] = [
+        Data(id=1, message="This is the first message"),
+        Data(id=2, message="This is the second message"),
+    ]
+    return data
+
+
+def create_data_as_string() -> str:
+    data: list[Data] = create_data()
+    json_data: str = json.dumps([data.model_dump() for data in data])
+    return json_data
 
 
 @app.get("/")
 def read_root() -> str:
-    return "Hello world"
+    return "Hello World!"
+
+
+@app.get("/data")
+def get_data_list() -> list[Data]:
+    response: list[Data] = create_data()
+    return response
+
+
+@app.get("/data-string")
+def get_data_list_as_string() -> str:
+    response: str = create_data_as_string()
+    return response
 
 
 @app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+def read_item(item_id: int) -> dict[str, int]:
+    print(f"item_id: {item_id}")
+    # do something with the item_id here.
+    return {"item_id": item_id}
+
+
+@app.post("/post-data")
+async def post_data(
+    int_field: int = Form(...),
+    string_field: str = Form(...),
+    bool_field: bool = Form(...),
+) -> dict[str, Any]:
+    print(
+        f"int field: {int_field}, string field: {string_field}, bool field: {bool_field}"
+    )
+    return {
+        "int field": int_field,
+        "string field": string_field,
+        "bool field": bool_field,
+    }
+
+
+class JsonData(BaseModel):
+    int_field: int
+    string_field: str
+    bool_field: bool
+
+
+@app.post("/post-json-data")
+async def post_json_data(data: JsonData) -> dict[str, Any]:
+    print(
+        f"int field: {data.int_field}, string field: {data.string_field}, bool field: {data.bool_field}"
+    )
+    return {
+        "int_field": data.int_field,
+        "string_field": data.string_field,
+        "bool_field": data.bool_field,
+    }
+
 
 if __name__ == "__main__":
-    uvicorn.run(app=app, port=8000, host="0.0.0.0")
+    uvicorn.run(app="app:app", port=8000, host="0.0.0.0", reload=True)

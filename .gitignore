@@ -6,7 +6,7 @@ frontend/tmp
 frontend/out-tsc
 frontend/bazel-out
 .venv
-__py.cache__
+__pycache__
 # Node
 frontend/node_modules
 npm-debug.log

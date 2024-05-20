@@ -1,1 +1,18 @@
-<p-button label="Click me!" (onClick)="getData()"></p-button>
+<p-button label="Get data" (onClick)="updateData()"></p-button>
+<h4>Basic data</h4>
+<p>
+    {{ data | async }}
+</p>
+
+<h4>Data list as string</h4>
+<p>
+    {{ dataListAsString | async }}
+</p>
+
+<h4>Data list</h4>
+<ul>
+  <li *ngFor="let item of dataList | async">
+    <strong>ID:</strong> {{ item.id }}<br>
+    <strong>Message:</strong> {{ item.message }}
+  </li>
+</ul>
