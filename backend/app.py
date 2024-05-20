@@ -1,4 +1,6 @@
 import json
+import uvicorn
+
 from typing import Any
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
@@ -97,6 +99,7 @@ async def post_json_data(data: JsonData) -> dict[str, Any]:
 @app.post("/upload-file")
 async def upload_file(file: UploadFile = File(...)) -> dict[str, str | None]:
     contents = await file.read()
+    print("Uploaded file contents: ")
     print(contents)
     # Process the file contents as needed
     return {"Processed filename": file.filename}
@@ -105,6 +108,10 @@ async def upload_file(file: UploadFile = File(...)) -> dict[str, str | None]:
 @app.post("/binary-data")
 async def upload_binary_data(request: Request) -> dict[str, str]:
     binary_data: bytes = await request.body()
+    print("Binary data: ")
     print(binary_data)
     # Process the binary data as needed
     return {"message": "Binary data uploaded successfully"}
+
+if __name__ == "__main__":
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
