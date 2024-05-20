@@ -1,10 +1,9 @@
+import json
 from typing import Any
 
-from fastapi import FastAPI, Form
-from pydantic import BaseModel
-import uvicorn
-import json
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -20,6 +19,12 @@ app.add_middleware(
 class Data(BaseModel):
     id: int
     message: str
+
+
+class JsonData(BaseModel):
+    int_field: int
+    string_field: str
+    bool_field: bool
 
 
 def create_data() -> list[Data]:
@@ -76,17 +81,12 @@ async def post_data(
     }
 
 
-class JsonData(BaseModel):
-    int_field: int
-    string_field: str
-    bool_field: bool
-
-
 @app.post("/post-json-data")
 async def post_json_data(data: JsonData) -> dict[str, Any]:
     print(
         f"int field: {data.int_field}, string field: {data.string_field}, bool field: {data.bool_field}"
     )
+    # do something with the Json data here.
     return {
         "int_field": data.int_field,
         "string_field": data.string_field,
@@ -94,5 +94,9 @@ async def post_json_data(data: JsonData) -> dict[str, Any]:
     }
 
 
-if __name__ == "__main__":
-    uvicorn.run(app="app:app", port=8000, host="0.0.0.0", reload=True)
+@app.post("/upload-file")
+async def upload_file(file: UploadFile = File(...)) -> dict[str, str | None]:
+    contents = await file.read()
+    print(contents)
+    # Process the file contents as needed
+    return {"Processed filename": file.filename}

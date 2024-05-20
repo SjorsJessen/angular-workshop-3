@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, from, map } from 'rxjs';
+import { encode, decode } from '@msgpack/msgpack';
+import { Form } from '@angular/forms';
 
 export interface Data {
   id: number;
@@ -49,4 +51,13 @@ export class DataService {
     const url: string = `${this.baseUrl}/post-json-data`;
     return this.httpClient.post<any>(url, data);
   }
+
+    public uploadFile(formData: FormData): void {
+      const url: string = `${this.baseUrl}/upload-file`;
+      this.httpClient.post(url, formData).subscribe(response => {
+        console.log('File uploaded successfully:', response);
+      }, error => {
+        console.error('Error uploading file:', error);
+      });
+    }
 }

@@ -48,12 +48,12 @@ export class AppComponent implements OnInit {
   public submitJsonData(): void {
     const jsonData = {
       int_field: 1000,
-      string_field: 'angular message',
+      string_field: 'Angular message',
       bool_field: true
     };
 
     this.dataService.postJsonData(jsonData).subscribe(response => {
-      console.log(response); // Handle response as needed
+      console.log(response);
     });
   }
 }
